@@ -92,6 +92,20 @@ bool method_datagram_t::test(stat_t& stat) const {
 
     res.time_send = res.time_recv = res.time_end = timeval_current();
     res.interval_event = res.time_end - res.time_start;
+
+    {
+        thr::spinlock_guard_t guard(stat.spinlock);
+
+        stat.update_time(res.time_end - res.time_start, res.interval_event);
+
+        stat.event();
+
+        stat.update(0, res.err);
+        if(!res.err) {
+            stat.update_size(res.size_in, res.size_out);
+        }
+    }
+
     loggers.commit(request, tag, res);
 
     return true;
