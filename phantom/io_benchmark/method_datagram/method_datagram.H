@@ -3,6 +3,7 @@
 #include <pd/base/config.H>
 #include <pd/base/config_list.H>
 #include <pd/base/netaddr.H>
+#include <pd/base/thr.H>
 
 #include <phantom/pd.H>
 #include <phantom/module.H>
@@ -44,6 +45,7 @@ private:
     virtual const netaddr_t& target_addr() = 0;
 
     source_t* source;
+
     int datagram_fd;
 
     int connect_fd();

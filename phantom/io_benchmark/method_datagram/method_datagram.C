@@ -64,6 +64,27 @@ bool method_datagram_t::test(stat_t& stat) const {
     req.truncate(request.size());
 
     ssize_t err = bq_write(datagram_fd, req.ptr(), req.size(), &timeout);
+
+    // HACK around epoll interface
+    // We can't add same fd to same epoll twice, we are dup()-ing it
+    // This event should be very rare
+    if(err < 0 && errno == EAGAIN) {
+        int fd_dup = ::dup(datagram_fd);
+        if(fd_dup < 0) {
+            res.err = errno;
+            res.log_level = logger_t::network_error;
+        } else {
+            err = bq_write(datagram_fd, req.ptr(), req.size(), &timeout);
+            res.err = errno;
+        }
+
+        // no errors before close
+        if(fd_dup >= 0 && ::close(fd_dup) < 0 && res.err == 0) {
+            res.err = errno;
+            res.log_level = logger_t::network_error;
+        }
+    }
+
     if(err < 0 && errno != ECANCELED) {
         res.err = errno;
         res.log_level = logger_t::network_error;
