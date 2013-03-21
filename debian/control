@@ -1,0 +1,11 @@
+Source: phantom-udp-benchmark
+Priority: extra
+Maintainer: Fedor Korotky <prime@yandex-team.ru>
+Build-Depends: debhelper (>= 8.0.0), phantom-dev
+Standards-Version: 3.9.2
+Homepage: https://github.com/slon/phantom-udp-benchmark/
+
+Package: phantom-udp-benchmark
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Phantom module for udp load testing.
