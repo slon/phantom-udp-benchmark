@@ -47,6 +47,7 @@ private:
     source_t* source;
 
     int datagram_fd;
+    const interval_t timeout;
 
     int connect_fd();
 public:
@@ -56,6 +57,7 @@ public:
 
         config::objptr_t<source_t> source;
         config::list_t<config::objptr_t<logger_t> > loggers;
+        interval_t timeout;
 
         config_t();
         void check(const in_t::ptr_t& p) const;

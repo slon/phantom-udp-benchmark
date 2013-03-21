@@ -34,7 +34,7 @@ void method_datagram_t::loggers_t::commit(const in_segment_t& request,
 }
 
 method_datagram_t::method_datagram_t(const string_t&, const config_t& config)
-    : source(config.source), datagram_fd(-1) {
+    : source(config.source), datagram_fd(-1), timeout(config.timeout) {
 
     for(typeof(config.loggers.ptr()) lptr = config.loggers; lptr; ++lptr)
         ++loggers.size;
@@ -58,15 +58,15 @@ bool method_datagram_t::test(stat_t& stat) const {
     res.size_out = request.size();
     res.time_conn = timeval_current();
 
-    interval_t timeout = interval_second;
+    interval_t _timeout = timeout;
 
     str_t req = in_t::ptr_t(request).__chunk();
     req.truncate(request.size());
 
-    ssize_t err = bq_write(datagram_fd, req.ptr(), req.size(), &timeout);
+    ssize_t err = bq_write(datagram_fd, req.ptr(), req.size(), &_timeout);
 
     // HACK around epoll interface
-    // We can't add same fd to same epoll twice, we are dup()-ing it
+    // Since we can't add one fd to epoll twice, we are dup()-ing it
     // This event should be very rare
     if(err < 0 && errno == EAGAIN) {
         int fd_dup = ::dup(datagram_fd);
@@ -74,7 +74,7 @@ bool method_datagram_t::test(stat_t& stat) const {
             res.err = errno;
             res.log_level = logger_t::network_error;
         } else {
-            err = bq_write(datagram_fd, req.ptr(), req.size(), &timeout);
+            err = bq_write(datagram_fd, req.ptr(), req.size(), &_timeout);
             res.err = errno;
         }
 
@@ -254,6 +254,7 @@ config_binding_type(method_datagram_t, source_t);
 config_binding_value(method_datagram_t, source);
 config_binding_type(method_datagram_t, logger_t);
 config_binding_value(method_datagram_t, loggers);
+config_binding_value(method_datagram_t, timeout);
 } // namespace method_datagram
 
 namespace method_datagram_ipv4 {

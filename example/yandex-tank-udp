@@ -1,0 +1,2 @@
+#! /bin/sh
+yandex-tank -o "phantom.additional_libs=io_benchmark_method_datagram" -o "phantom.method_prefix=method_datagram" -o "phantom.tank_type=" "$@"
