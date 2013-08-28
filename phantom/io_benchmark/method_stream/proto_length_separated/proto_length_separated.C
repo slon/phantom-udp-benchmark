@@ -9,7 +9,7 @@
 
 namespace phantom { namespace io_benchmark { namespace method_stream {
 
-MODULE(io_bencmark_method_stream_proto_length_separated);
+MODULE(io_benchmark_method_stream_proto_length_separated);
 
 class proto_length_separated_t : public proto_t {
 public:
