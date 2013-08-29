@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include <pd/base/config.H>
 #include <pd/base/config_list.H>
 #include <pd/base/netaddr.H>
@@ -22,29 +24,18 @@ public:
     typedef method_stream::result_t result_t;
 
 private:
-    struct loggers_t {
-        size_t size;
-        logger_t **items;
-        inline loggers_t() throw() : size(0), items(NULL) { }
-        inline ~loggers_t() throw() { if(items) delete [] items; }
+    class loggers_t;
 
-        void commit(
-            in_segment_t const &request, in_segment_t &tag, result_t const &res
-        ) const;
-
-    } loggers;
-
-    virtual bool test(stat_t &stat) const;
-    virtual void init();
-    virtual void stat(out_t &out, bool clear, bool hrr_flag) const;
-    virtual void fini();
-
-    virtual size_t maxi() const throw();
-    virtual descr_t const *descr(size_t ind) const throw();
+    virtual bool test(times_t &times) const;
+    virtual void do_init();
+    virtual void do_run() const;
+    virtual void do_stat_print() const;
+    virtual void do_fini();
 
     virtual const netaddr_t& target_addr() = 0;
 
     source_t* source;
+    std::unique_ptr<loggers_t> loggers;
 
     int datagram_fd;
     const interval_t timeout;
@@ -56,7 +47,7 @@ public:
         config_binding_type_ref(logger_t);
 
         config::objptr_t<source_t> source;
-        config::list_t<config::objptr_t<logger_t> > loggers;
+        config::list_t<config::objptr_t<logger_t>> loggers;
         interval_t timeout;
 
         config_t();
@@ -64,6 +55,7 @@ public:
     };
 
     method_datagram_t(const string_t&, const config_t& conf);
+    ~method_datagram_t();
 };
 
 }} // namespace phantom::io_benchmark
