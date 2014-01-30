@@ -19,12 +19,15 @@ public:
 	virtual void do_fini() { }
 
 	struct config_t {
+		config_t() : big_endian(true) {}
+
 		void check(in_t::ptr_t const &) const {}
+		config::enum_t<bool> big_endian;
 	};
 
 	inline proto_length_separated_t(
-		string_t const &, config_t const &
-	) : proto_t() {}
+		string_t const &, config_t const & config
+	) : proto_t(), big_endian(config.big_endian) {}
 
 	virtual size_t maxi() const throw() { return 0; }
 	virtual descr_t const* descr(size_t) const throw() { return NULL; }
@@ -39,17 +42,23 @@ public:
 			++ptr;
 		}
 
-		length = be32toh(length);
+		if(big_endian)
+			length = be32toh(length);
+
 		ptr += length;
-		res_code = true;
+		res_code = 200;
 
 		return true;
 	}
+
+private:
+	bool big_endian;
 };
 
 namespace config_binding {
 config_binding_sname(proto_length_separated_t);
 config_binding_ctor(proto_t, proto_length_separated_t);
+config_binding_value(proto_length_separated_t, big_endian);
 } // namespace config_binding
 
 }}} // namespace phantom::io_benchmark::method_stream
