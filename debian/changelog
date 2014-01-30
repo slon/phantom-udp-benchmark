@@ -1,0 +1,11 @@
+phantom-benchmark-extras (0.2) unstable; urgency=low
+
+  * Rename package, backport proto_length_separated.
+
+ -- Fedor Korotky <prime@yandex-team.ru>  Thu, 30 Jan 2014 11:40:40 +0400
+
+phantom-benchmark-extras (0.1) unstable; urgency=low
+
+  * Initial Release.
+
+ -- Fedor Korotky <prime@yandex-team.ru>  Thu, 21 Mar 2013 15:32:12 +0400
