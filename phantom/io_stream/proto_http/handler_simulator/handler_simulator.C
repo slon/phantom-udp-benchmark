@@ -63,7 +63,7 @@ public:
 			r = std::normal_distribution<double>()(rng);
 		}
 
-		interval_t sleep_time = mean_time + (r * 1000000 * std_time) / 1000000;
+		interval_t sleep_time = mean_time + (r * 1000000 * stddev_time) / 1000000;
 		if(sleep_time > max_time) sleep_time = max_time;
 		if(sleep_time < min_time) sleep_time = min_time;
 		bq_sleep(&sleep_time);
@@ -102,7 +102,7 @@ public:
 	virtual void fini() {}
 
 private:
-	interval_t mean_time, std_time, min_time, max_time;
+	interval_t mean_time, stddev_time, min_time, max_time;
 	string_t response_file;
 
 	string_t response_content;

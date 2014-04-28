@@ -1,1 +1,2 @@
+example/yandex-tank-udp usr/bin
 lib/phantom/*.so usr/lib/phantom
