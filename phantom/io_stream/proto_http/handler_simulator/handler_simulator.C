@@ -19,9 +19,9 @@ namespace phantom { namespace io_stream { namespace proto_http {
 class handler_simulator_t : public handler_t, public io_t {
 public:
 	struct config_t : public handler_t::config_t, public io_t::config_t {
-		config_t() : mean_time(50 * interval::millisecond), std_time(5 * interval::millisecond), min_time(interval::second), max_time(interval::minute) {}
+		config_t() : mean_time(50 * interval::millisecond), stddev_time(5 * interval::millisecond), min_time(0), max_time(interval::minute) {}
 
-		interval_t mean_time, std_time;
+		interval_t mean_time, stddev_time;
 		interval_t min_time, max_time;
 		string_t response_file;
 
@@ -37,7 +37,7 @@ public:
 		handler_t(name, config),
 		io_t(name, config),
 		mean_time(config.mean_time),
-		std_time(config.std_time),
+		stddev_time(config.stddev_time),
 		min_time(config.min_time),
 		max_time(config.max_time),
 		response_file(config.response_file) {}
@@ -63,7 +63,7 @@ public:
 			r = std::normal_distribution<double>()(rng);
 		}
 
-		interval_t sleep_time = mean_time + r * std_time;
+		interval_t sleep_time = mean_time + (r * 1000000 * std_time) / 1000000;
 		if(sleep_time > max_time) sleep_time = max_time;
 		if(sleep_time < min_time) sleep_time = min_time;
 		bq_sleep(&sleep_time);
@@ -117,7 +117,7 @@ namespace handler_simulator_config {
 config_binding_sname(handler_simulator_t);
 config_binding_value(handler_simulator_t, response_file);
 config_binding_value(handler_simulator_t, mean_time);
-config_binding_value(handler_simulator_t, std_time);
+config_binding_value(handler_simulator_t, stddev_time);
 config_binding_value(handler_simulator_t, min_time);
 config_binding_value(handler_simulator_t, max_time);
 config_binding_ctor(io_t, handler_simulator_t);
