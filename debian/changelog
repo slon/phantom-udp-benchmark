@@ -1,3 +1,10 @@
+phantom-benchmark-extras (0.3) common; urgency=medium
+
+  * use phantom pre 55 for all modules
+  * add web simulator
+
+ -- Andrey Pohilko (undera) <undera@yandex-team.ru>  Tue, 29 Apr 2014 14:52:07 +0400
+
 phantom-benchmark-extras (0.2) unstable; urgency=low
 
   * Rename package, backport proto_length_separated.
